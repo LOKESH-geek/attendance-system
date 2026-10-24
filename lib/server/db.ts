@@ -120,6 +120,24 @@ export async function readDb(): Promise<Database> {
         { $set: { id } },
       );
     }
+
+
+  
+    
+const mongoId = (raw as { _id: string })._id;
+
+if (duplicate) {
+  await studentCollection.deleteOne({ _id: mongoId });
+  continue;
+}
+
+if (!rawId) {
+  await studentCollection.updateOne(
+    { _id: mongoId },
+    { $set: { id } },
+  );
+}
+
     student.id = id;
     student.erpId = erpId;
     students.push(student);
