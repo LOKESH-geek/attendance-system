@@ -1,0 +1,25 @@
+
+  {
+  "attendance": [],
+  "users": [
+    {
+      "id": "08bc3f4c-ad50-435a-8727-d6a678efe84a",
+      "email": "admin@attendease.local",
+      "passwordHash": "a89d6c02b3186d42e09199ce295ce5e2618524e0a30987ec6db84e3971dfcc8407517ee5fe3b7ab15b43d0b986f3826036d42c2b1135f9f22d3358efecaf5401",
+      "name": "College Admin",
+      "role": "Administrator"
+    }
+  ],
+  "sessions": [
+    {
+      "id": "5f945826-3e17-48a3-97b3-27d526d7e4e8",
+      "userId": "08bc3f4c-ad50-435a-8727-d6a678efe84a",
+      "expiresAt": "2026-10-21T20:27:41.640Z"
+    },
+    {
+      "id": "6e072c1f-7635-4848-83c1-b79639c3adb4",
+      "userId": "08bc3f4c-ad50-435a-8727-d6a678efe84a",
+      "expiresAt": "2026-10-21T20:27:41.936Z"
+    }
+  ]
+}

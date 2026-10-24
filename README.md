@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AttendEase — College Attendance System
 
-## Getting Started
+This is the existing Next.js application with its UI and pages retained. MongoDB is the persistent database; MongoDB Compass is used to inspect the same server/database. Postman can create students and mark attendance through the API.
 
-First, run the development server:
+## Requirements
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 20.9+ (Node 22 recommended)
+- MongoDB Community Server running locally, or a MongoDB Atlas cluster
+- MongoDB Compass (optional, for viewing documents)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local setup with Compass
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Start MongoDB Community Server. In Compass, connect to `mongodb://127.0.0.1:27017`.
+2. Copy `.env.example` to `.env.local` in the project root.
+3. Set `MONGODB_URI=mongodb://127.0.0.1:27017/attendease` and `MONGODB_DB=attendease`. For Atlas, use the same Atlas URI in both the app configuration and Compass.
+4. Run:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   ```bash
+   npm install
+   npm run seed
+   npm run dev
+   ```
 
-## Learn More
+5. Open `http://localhost:3000`. The local demo login is `admin@attendease.local` / `admin123` unless you configured a different initial admin password before the first user was created.
+6. Check `http://localhost:3000/api/test-db`. In Compass, refresh the `attendease` database to see `students`, `attendance`, and `users` collections.
 
-To learn more about Next.js, take a look at the following resources:
+`npm run seed` imports any legacy `data/db.json` records it can add without overwriting MongoDB documents, then adds sample students with ERP IDs `DEMO1001`–`DEMO1005` and a current-day sample attendance record if absent. It is safe to rerun. It does not reset existing records or change existing user passwords.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Postman
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Import `AttendEase.postman_collection.json`. Run **Login** first so Postman stores the `attendease_session` cookie, then run the student and attendance requests. Full examples and the `PUT` replacement behavior are documented in [POSTMAN.md](./POSTMAN.md).
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `npm run dev` — development server
+- `npm run build` — production build
+- `npm run start` — production server
+- `npm run lint` — ESLint
+- `npm run seed` — idempotently add example data to MongoDB
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Data safety
+
+`POST /api/students` adds one student. `POST /api/attendance` marks attendance for an existing ERP ID. `PUT /api/students` and `PUT /api/attendance` replace their entire respective collections to preserve the current frontend's bulk-save contract; do not send an empty array unless you intend to clear that collection. Back up existing data before manual database cleanup.

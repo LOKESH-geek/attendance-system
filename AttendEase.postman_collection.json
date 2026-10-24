@@ -1,0 +1,152 @@
+{
+  "info": {
+    "name": "AttendEase API (MongoDB)",
+    "description": "Login first to store the attendease_session cookie, then test students and attendance APIs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "adminEmail",
+      "value": "admin@attendease.local"
+    },
+    {
+      "key": "adminPassword",
+      "value": "admin123"
+    },
+    {
+      "key": "testErpId",
+      "value": "POSTMAN2001"
+    },
+    {
+      "key": "testStudentId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Database health",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/test-db"
+      }
+    },
+    {
+      "name": "Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Login succeeded', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/auth/login"
+      }
+    },
+    {
+      "name": "List students",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/students"
+      }
+    },
+    {
+      "name": "Create student",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Student created or ERP already exists', function () { pm.expect([201, 409]).to.include(pm.response.code); });",
+              "if (pm.response.code === 201) { const data = pm.response.json(); if (data.id) pm.collectionVariables.set('testStudentId', data.id); }"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"erpId\": \"{{testErpId}}\",\n  \"name\": \"Postman Test Student\",\n  \"email\": \"postman.student@example.com\",\n  \"department\": \"Computer Science\",\n  \"year\": \"3rd Year\",\n  \"section\": \"A\",\n  \"phone\": \"9000000201\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/students"
+      }
+    },
+    {
+      "name": "List attendance",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/api/attendance"
+      }
+    },
+    {
+      "name": "Mark sample student Present",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"erpId\": \"DEMO1001\",\n  \"subject\": \"Database Management\",\n  \"department\": \"Computer Science\",\n  \"year\": \"3rd Year\",\n  \"section\": \"A\",\n  \"status\": \"Present\",\n  \"attendanceDate\": \"{{today}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": "{{baseUrl}}/api/attendance"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const now = new Date(); const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`; pm.collectionVariables.set('today', localDate);"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

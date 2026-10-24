@@ -1,12 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  experimental: {
-    agentFeedback: true,
-  },
-  cacheComponents: true,
-  partialPrefetching: true,
+  // Keep the project's existing Tailwind/Turbopack CSS loader configuration.
   turbopack: {
     rules: {
       "*.css": {
