@@ -90,7 +90,9 @@ export async function readDb(): Promise<Database> {
   await ensureDb();
   const db = await getDatabase();
   const [studentDocs, attendance, users, sessions] = await Promise.all([
-    db.collection("students").find({}).toArray(),
+  db.collection<Student & { _id: string }>("students")
+  .find({})
+  .toArray(),
     db.collection("attendance").find({}).toArray(),
     db.collection("users").find({}).toArray(),
     db.collection("sessions").find({}).toArray(),
@@ -109,9 +111,8 @@ export async function readDb(): Promise<Database> {
     const normalizedErp = erpId.toLowerCase();
    
     const duplicate = seenIds.has(id) || (normalizedErp !== "" && seenErpIds.has(normalizedErp));
-    const mongoId = String(
-       (raw as { _id: unknown })._id
-    );
+   const mongoId = raw._id;
+
 if (duplicate) {
   await studentCollection.deleteOne({ _id: mongoId });
   continue;
