@@ -88,7 +88,7 @@ export default function AttendancePage() {
   const [department, setDepartment] = useState("All");
   const [year, setYear] = useState("All");
   const [section, setSection] = useState("All");
-  const [subject, setSubject] = useState(SUBJECTS[0]);
+  const [subject, setSubject] = useState<string>(SUBJECTS[0]);
   const [search, setSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
   const [statusMap, setStatusMap] = useState<Record<string, AttendanceStatus>>({});

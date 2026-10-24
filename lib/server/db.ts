@@ -43,7 +43,7 @@ function stripMongoId<T>(doc: Record<string, unknown>): T {
 /** MongoDB is the source of truth. Existing JSON data is imported once when collections are empty. */
 async function ensureDb() {
   const db = await getDatabase();
-  const migration = db.collection("_app_meta");
+  const migration = db.collection<{ _id: string }>("_app_meta");
   const alreadyMigrated = await migration.findOne({ _id: "legacy-json-migrated" });
   if (!alreadyMigrated) {
     const collections: Array<keyof Database> = ["students", "attendance", "users", "sessions"];
@@ -100,7 +100,7 @@ export async function readDb(): Promise<Database> {
   const students: Student[] = [];
   const seenIds = new Set<string>();
   const seenErpIds = new Set<string>();
-  const studentCollection = db.collection("students");
+  const studentCollection = db.collection<{ _id: string }>("students");
   for (const raw of studentDocs) {
     const student = stripMongoId<Student>(raw as unknown as Record<string, unknown>);
     const rawId = String(student.id ?? "").trim();
