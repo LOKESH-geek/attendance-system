@@ -107,11 +107,11 @@ export async function readDb(): Promise<Database> {
     const id = rawId || crypto.randomUUID();
     const erpId = String(student.erpId ?? "").trim();
     const normalizedErp = erpId.toLowerCase();
+   
+    const duplicate = seenIds.has(id) || (normalizedErp !== "" && seenErpIds.has(normalizedErp));
     const mongoId = String(
        (raw as { _id: unknown })._id
     );
-    const duplicate = seenIds.has(id) || (normalizedErp !== "" && seenErpIds.has(normalizedErp));
-
 if (duplicate) {
   await studentCollection.deleteOne({ _id: mongoId });
   continue;
