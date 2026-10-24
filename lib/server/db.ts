@@ -100,7 +100,7 @@ export async function readDb(): Promise<Database> {
   const students: Student[] = [];
   const seenIds = new Set<string>();
   const seenErpIds = new Set<string>();
-  const studentCollection = db.collection<{ _id: string }>("students");
+  const studentCollection = db.collection<Student & { _id: string }>("students");
   for (const raw of studentDocs) {
     const student = stripMongoId<Student>(raw as unknown as Record<string, unknown>);
     const rawId = String(student.id ?? "").trim();
@@ -110,13 +110,13 @@ export async function readDb(): Promise<Database> {
     const duplicate = seenIds.has(id) || (normalizedErp !== "" && seenErpIds.has(normalizedErp));
 
     if (duplicate) {
-      await studentCollection.deleteOne({ _id: (raw as { _id: unknown })._id });
+      await studentCollection.deleteOne({ _id: raw._id as string});
       continue;
     }
 
     if (!rawId) {
       await studentCollection.updateOne(
-        { _id: (raw as { _id: unknown })._id },
+        { _id: raw._id as string},
         { $set: { id } },
       );
     }
