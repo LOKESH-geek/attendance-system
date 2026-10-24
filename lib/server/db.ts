@@ -124,19 +124,6 @@ export async function readDb(): Promise<Database> {
 
   
     
-const mongoId =  raw._id as string
-
-if (duplicate) {
-  await studentCollection.deleteOne({ _id: mongoId });
-  continue;
-}
-
-if (!rawId) {
-  await studentCollection.updateOne(
-    { _id: mongoId },
-    { $set: { id } },
-  );
-}
 
     student.id = id;
     student.erpId = erpId;
